@@ -36,7 +36,7 @@ export type EditorState = {
   };
 };
 
-const materialSlice = createSlice({
+const superEditorSlice = createSlice({
   name: "materials",
   initialState: {
     materials: [],
@@ -99,6 +99,7 @@ export const {
   materialAdded,
   durationChanged,
   newMaterialItemAdded,
-  currentChanged,currentProceeded
-} = materialSlice.actions;
-export const materialStore = configureStore(materialSlice);
+  currentChanged,
+  currentProceeded,
+} = superEditorSlice.actions;
+export const superEditorStore = configureStore(superEditorSlice);
