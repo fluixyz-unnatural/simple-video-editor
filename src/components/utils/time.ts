@@ -1,5 +1,4 @@
 import { Segment } from "../../domains/unit";
-import { Item } from "../../models/editor/editor";
 
 export const inSegment = <T extends number>(
   segment: Segment<T>,
