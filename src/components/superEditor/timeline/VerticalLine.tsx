@@ -1,5 +1,4 @@
-import React from "react";
-import { TlSvgPx } from "../../domains/unit";
+import { TlSvgPx } from "../../../domains/unit";
 
 type Props = Omit<
   Omit<Omit<Omit<React.SVGProps<SVGLineElement>, "x1">, "x2">, "y1">,

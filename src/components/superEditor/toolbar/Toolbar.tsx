@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { EditorState, materialAdded } from "../../models/editor/editor";
+import { EditorState, materialAdded } from "../../../models/editor/editor";
 
 export const Toolbar = () => {
   const materials = useSelector<EditorState, EditorState["materials"]>(
@@ -7,7 +7,6 @@ export const Toolbar = () => {
   );
   const dispatch = useDispatch();
 
-  console.log(materials);
   return (
     <div className="toolbar">
       <ul>

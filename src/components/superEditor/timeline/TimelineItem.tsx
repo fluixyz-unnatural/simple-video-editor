@@ -1,6 +1,6 @@
-import { Second } from "../../domains/unit";
-import { Item } from "../../models/editor/editor";
-import { TimelineViewBox, dur2svgWidth, time2svg } from "./Timeline";
+import { Second } from "../../../domains/unit";
+import { Item } from "../../../models/editor/editor";
+import { TimelineViewBox, time2svg, dur2svgWidth } from "./Timeline";
 
 type Props = {
   item: Item;

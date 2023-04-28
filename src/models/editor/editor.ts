@@ -2,7 +2,7 @@ import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Area, Position, Second, Segment, VideoPx } from "../../domains/unit";
 import { v4 as uuidv4 } from "uuid";
 
-type Material = {
+export type Material = {
   link: string; // materialAdded により追加される
   // previewにVideoElementとして追加された後に書き込まれる
   videoInfo?: {
@@ -85,8 +85,20 @@ const materialSlice = createSlice({
     itemAdded: (state, action: PayloadAction<{ item: Item }>) => {
       state.timeline.items.push(action.payload.item);
     },
+    currentChanged: (state, action: PayloadAction<{ current: Second }>) => {
+      state.timeline.current = action.payload.current;
+    },
+    currentProceeded: (state, action: PayloadAction<{ delta: Second }>) => {
+      state.timeline.current = (state.timeline.current +
+        action.payload.delta) as Second;
+    },
   },
 });
 
-export const { materialAdded, durationChanged,newMaterialItemAdded } = materialSlice.actions;
+export const {
+  materialAdded,
+  durationChanged,
+  newMaterialItemAdded,
+  currentChanged,currentProceeded
+} = materialSlice.actions;
 export const materialStore = configureStore(materialSlice);
