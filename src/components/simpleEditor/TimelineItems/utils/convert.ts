@@ -1,5 +1,5 @@
-import { TlDisplayPx, Second } from "../../domains/unit";
-import { Canvas } from "./Timeline";
+import { TlDisplayPx, Second } from "../../../../domains/unit";
+import { Canvas } from "../../Timeline";
 
 export const px2second = (
   px: TlDisplayPx,
@@ -34,5 +34,5 @@ export const calcOffset = (
   canvas: Omit<Canvas, "offset">,
   duration: Second
 ) => {
-  return sec - (x * duration) / canvas.width / canvas.scale as Second;
+  return (sec - (x * duration) / canvas.width / canvas.scale) as Second;
 };
