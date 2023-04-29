@@ -1,15 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AreaSize, Second, Segment, TlDisplayPx } from "../../domains/unit";
-import { DragHandlers, useDrag } from "../utils/useDrag";
-import { currentChanged, segmentMoved } from "../../models/simpleEditor/editor";
+import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
-import {
-  calcOffset,
-  dur2width,
-  px2second,
-  second2px,
-  width2dur,
-} from "./TimelineItems/utils/convert";
+import { calcOffset, px2second } from "./TimelineItems/utils/convert";
 import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine";
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
