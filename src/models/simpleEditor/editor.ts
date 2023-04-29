@@ -51,9 +51,16 @@ const simpleEditorSlice = createSlice({
       state.options.segment[type] = (state.options.segment[type] +
         delta) as Second;
     },
+    segmentChanged: (
+      state,
+      action: PayloadAction<{ type: "start" | "end"; time: Second }>
+    ) => {
+      const { type, time } = action.payload;
+      state.options.segment[type] = time;
+    },
   },
 });
 
-export const { inputAdded, currentChanged, segmentMoved } =
+export const { inputAdded, currentChanged, segmentMoved, segmentChanged } =
   simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);

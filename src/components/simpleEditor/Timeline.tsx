@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AreaSize, Second, Segment, TlDisplayPx } from "../../domains/unit";
 import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
@@ -6,6 +12,8 @@ import { calcOffset, px2second } from "./TimelineItems/utils/convert";
 import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine";
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
+import { useDomSize } from "../utils/useDomSize";
+import { clearSelection } from "../utils/clearSelection";
 
 type Props = {
   duration: Second;
@@ -20,22 +28,16 @@ const tlConst = { TIMELINE_HEIGHT, TIMELINE_PY } as const;
 export type Canvas = AreaSize<TlDisplayPx> & { scale: number; offset: Second };
 
 export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
-  const parent = useRef<HTMLDivElement>(null);
-  const [canvas, setCanvas] = useState<Canvas>();
   const dispatch = useDispatch();
 
-  // 最外部divのサイズをもとにsvgのサイズを決定
-  useEffect(() => {
-    if (parent.current) {
-      const viewBox = parent.current.getBoundingClientRect();
-      setCanvas({
-        width: viewBox.width,
-        height: viewBox.height,
-        scale: 1,
-        offset: 0,
-      } as Canvas);
-    }
-  }, [parent]);
+  const { ref: parent, size } = useDomSize<HTMLDivElement>();
+  const [scale, setScale] = useState<number>(1);
+  const [offset, setOffset] = useState<Second>(0 as Second);
+
+  const canvas = useMemo(
+    () => ({ ...size, scale, offset }),
+    [size, scale, offset]
+  );
 
   const onWheel = useCallback(
     (e: WheelEvent) => {
@@ -49,32 +51,24 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
         const rect = parent.current.getBoundingClientRect();
         const x = (e.pageX - rect.x) as TlDisplayPx;
 
-        setCanvas((prev) => {
-          if (!prev) return prev;
+        const nextScale = Math.pow(1.1, -deltaY) * scale;
+        // 同じpxが同じsecになるよう offset を調整する
+        const nextOffset = calcOffset(
+          x,
+          px2second(x, canvas, duration),
+          { ...canvas, scale: nextScale },
+          duration
+        ) as Second;
 
-          const scale = Math.pow(1.1, -deltaY) * prev?.scale;
-          // 同じpxが同じsecになるよう offset を調整する
-          const offset = calcOffset(
-            x,
-            px2second(x, canvas, duration),
-            { ...canvas, scale },
-            duration
-          ) as Second;
-          return { ...prev, scale, offset };
-        });
+        setScale(nextScale);
+        setOffset(nextOffset);
       } else {
         // offset
-        setCanvas((prev) =>
-          prev
-            ? ({
-                ...prev,
-                offset: prev.offset + (duration * deltaY) / 20,
-              } as Canvas)
-            : undefined
-        );
+        const delta = (duration * deltaY) / 20;
+        setOffset((prev) => (prev + delta) as Second);
       }
     },
-    [canvas, duration]
+    [canvas, duration, parent, scale]
   );
 
   useEffect(() => {
@@ -96,7 +90,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
           <svg
             viewBox={`0 0 ${canvas.width} ${canvas.height}`}
             className="absolute inset-0 h-full w-full bg-gray-200"
-            onClick={(e) => {
+            onDoubleClick={(e) => {
               // currentTime変更
               if (!parent.current) return;
               const rect = parent.current.getBoundingClientRect();
@@ -121,6 +115,15 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
               duration={duration}
               segment={segment}
             />
+            <text
+              x={0}
+              y={TIMELINE_HEIGHT}
+              font-size="256"
+              className="pointer-events-none selection:bg-opacity-0"
+              fill="transparent"
+            >
+              dummy_text_to_prevent_text_selection_with_double_click
+            </text>
           </svg>
         )}
       </div>

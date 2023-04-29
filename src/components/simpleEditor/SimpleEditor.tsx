@@ -11,6 +11,7 @@ import { Timeline } from "./Timeline";
 import { PlayButton } from "./PlayButton";
 import { Preview } from "./Preview";
 import { saveAsMp4 } from "../../domains/ffmpeg/save";
+import { SetSegmentButton } from "./SetSegmentButton";
 
 export const SimpleEditor = () => {
   const state = useSelector<SimpleEditorState, SimpleEditorState>(
@@ -55,11 +56,14 @@ export const SimpleEditor = () => {
       <div className="relative aspect-video w-full bg-gray-200">
         {state.input && <Preview ref={video} src={state.input.link} />}
       </div>
-      <PlayButton
-        disabled={!state.input}
-        playing={playing}
-        onClick={() => setPlaying((prev) => !prev)}
-      />
+      <div className="flex gap-4">
+        <PlayButton
+          disabled={!state.input}
+          playing={playing}
+          onClick={() => setPlaying((prev) => !prev)}
+        />
+        <SetSegmentButton current={state.editor.current} />
+      </div>
       {state.input ? (
         <Timeline
           current={state.editor.current}
