@@ -1,7 +1,11 @@
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { Item, Material } from "../../models/editor/editor";
+import { SimpleEditorState } from "../../models/simpleEditor/editor";
 
-export const saveAsMp4 = async (items: Item[], materials: Material[]) => {
+export const saveAsMp4fromItems = async (
+  items: Item[],
+  materials: Material[]
+) => {
   const ffmpeg = createFFmpeg({ log: true });
   await ffmpeg.load();
 
@@ -45,6 +49,35 @@ export const saveAsMp4 = async (items: Item[], materials: Material[]) => {
   const link = document.createElement("a");
   link.href = url;
   const fileName = "output.mp4";
+  link.download = fileName;
+  link.click();
+};
+
+export const saveAsMp4 = async (
+  options: SimpleEditorState["options"],
+  input: string
+) => {
+  const ffmpeg = createFFmpeg({ log: true });
+  await ffmpeg.load();
+  const inputFileName = "input";
+  await ffmpeg.FS("writeFile", inputFileName, await fetchFile(input));
+
+  const commands = ["-i", inputFileName];
+
+  commands.push("-ss", `${options.segment.start}`);
+  commands.push("-to", `${options.segment.end}`);
+
+  commands.push(options.output);
+  console.log(commands);
+  await ffmpeg.run(...commands);
+
+  const data = ffmpeg.FS("readFile", options.output);
+  const url = URL.createObjectURL(
+    new Blob([data.buffer], { type: "video/mp4" })
+  );
+  const link = document.createElement("a");
+  link.href = url;
+  const fileName = options.output;
   link.download = fileName;
   link.click();
 };

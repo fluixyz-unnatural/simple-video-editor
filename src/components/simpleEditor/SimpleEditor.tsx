@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   SimpleEditorState,
-  inputAdded,
   currentChanged,
 } from "../../models/simpleEditor/editor";
 import { Second } from "../../domains/unit";
@@ -11,6 +10,7 @@ import { FileInput } from "./FileInput";
 import { Timeline } from "./Timeline";
 import { PlayButton } from "./PlayButton";
 import { Preview } from "./Preview";
+import { saveAsMp4 } from "../../domains/ffmpeg/save";
 
 export const SimpleEditor = () => {
   const state = useSelector<SimpleEditorState, SimpleEditorState>(
@@ -61,11 +61,23 @@ export const SimpleEditor = () => {
         onClick={() => setPlaying((prev) => !prev)}
       />
       {state.input ? (
-        <Timeline current={state.editor.current} />
+        <Timeline
+          current={state.editor.current}
+          duration={state.input.duration}
+          segment={state.options.segment}
+        />
       ) : (
         <FileInput />
       )}
       <pre>ffmpeg {option2ffmpegCommand(state.options).join(" ")}</pre>
+      <button
+        onClick={() =>
+          state.input && saveAsMp4(state.options, state.input.link)
+        }
+        className="rounded-lg bg-teal-500 p-2 px-4 text-white hover:bg-teal-600 active:bg-teal-700"
+      >
+        output
+      </button>
     </div>
   );
 };
@@ -94,9 +106,13 @@ const option2ffmpegCommand = (
     "-i",
     "[input]",
     "-ss",
-    `${options.segment.start}`,
+    `${chottoRounded(options.segment.start)}`,
     "-to",
-    `${options.segment.end}`,
-    "output.mp4",
+    `${chottoRounded(options.segment.end)}`,
+    options.output,
   ];
+};
+
+const chottoRounded = (a: number) => {
+  return Math.round(a * 100) / 100;
 };

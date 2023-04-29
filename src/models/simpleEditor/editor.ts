@@ -23,7 +23,7 @@ const simpleEditorSlice = createSlice({
     options: {
       segment: { start: 0, end: 0 } as Segment<Second>,
       crop: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } } as Area<VideoPx>,
-      output: "output.mp4",
+      output: "output.gif",
     },
     editor: { current: 0 as Second },
   } as SimpleEditorState,
@@ -33,16 +33,23 @@ const simpleEditorSlice = createSlice({
       action: PayloadAction<{ input: SimpleEditorState["input"] }>
     ) => {
       state.input = action.payload.input;
+      state.options.segment.end =
+        action.payload.input?.duration ?? (0 as Second);
     },
     currentChanged: (state, action: PayloadAction<{ current: Second }>) => {
       state.editor.current = action.payload.current;
     },
-    currentProceeded: (state, action: PayloadAction<{ delta: Second }>) => {
-      state.editor.current = (state.editor.current +
-        action.payload.delta) as Second;
+    segmentMoved: (
+      state,
+      action: PayloadAction<{ type: "start" | "end"; delta: Second }>
+    ) => {
+      const { type, delta } = action.payload;
+      state.options.segment[type] = (state.options.segment[type] +
+        delta) as Second;
     },
   },
 });
 
-export const { inputAdded, currentChanged } = simpleEditorSlice.actions;
+export const { inputAdded, currentChanged, segmentMoved } =
+  simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);
