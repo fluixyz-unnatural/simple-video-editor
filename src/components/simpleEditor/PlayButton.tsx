@@ -1,9 +1,28 @@
+import { useCallback, useEffect } from "react";
+
 type Props = {
   playing: boolean;
   disabled: boolean;
   onClick: () => void;
 };
 export const PlayButton: React.FC<Props> = ({ playing, disabled, onClick }) => {
+  const onSpace = useCallback(() => {
+    onClick();
+  }, [onClick]);
+
+  const onKeydown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === " ") onSpace();
+    },
+    [onSpace]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeydown);
+    return () => {
+      window.removeEventListener("keydown", onKeydown);
+    };
+  }, []);
   return (
     <button
       disabled={disabled}

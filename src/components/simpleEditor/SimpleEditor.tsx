@@ -29,9 +29,9 @@ export const SimpleEditor = () => {
     if (video.current) {
       if (playing && !playingRef.current) {
         playingRef.current = true;
-        video.current.currentTime = state.editor.current;
         await video.current.play();
       } else if (!playing) {
+        video.current.currentTime = state.editor.current;
         video.current.pause();
         playingRef.current = false;
       }
@@ -74,7 +74,8 @@ export const SimpleEditor = () => {
         onClick={() =>
           state.input && saveAsMp4(state.options, state.input.link)
         }
-        className="rounded-lg bg-teal-500 p-2 px-4 text-white hover:bg-teal-600 active:bg-teal-700"
+        disabled={state.input === undefined}
+        className="rounded-lg bg-teal-500 p-2 px-4 text-white hover:bg-teal-600 active:bg-teal-700 disabled:pointer-events-none disabled:opacity-30"
       >
         output
       </button>

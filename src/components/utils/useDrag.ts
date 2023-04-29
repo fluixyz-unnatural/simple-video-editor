@@ -1,16 +1,20 @@
 import React, { useCallback, useRef, useState } from "react";
 
+export type DragHandlers = {
+  onMouseDown: () => void;
+  onMouseMove: (e: React.MouseEvent<unknown, MouseEvent>) => void;
+  onMouseLeave: () => void;
+  onMouseUp: () => void;
+};
+
 export const useDrag = (
   onDragging: (e: React.MouseEvent<unknown, MouseEvent>) => void
 ) => {
   const dragging = useRef<boolean>(false);
 
-  const onMouseDown = useCallback(
-    () => {
-      if (!dragging.current) dragging.current = true;
-    },
-    []
-  );
+  const onMouseDown = useCallback(() => {
+    if (!dragging.current) dragging.current = true;
+  }, []);
   const onMouseLeave = useCallback(() => {
     if (dragging.current) dragging.current = false;
   }, []);
@@ -30,7 +34,7 @@ export const useDrag = (
       onMouseLeave,
       onMouseMove,
       onMouseUp: onMouseLeave,
-    },
-    dragging: dragging.current,
+    } ,
+    dragging: dragging,
   };
 };

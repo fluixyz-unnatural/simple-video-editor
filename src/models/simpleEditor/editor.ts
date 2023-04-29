@@ -37,7 +37,11 @@ const simpleEditorSlice = createSlice({
         action.payload.input?.duration ?? (0 as Second);
     },
     currentChanged: (state, action: PayloadAction<{ current: Second }>) => {
-      state.editor.current = action.payload.current;
+      const next = Math.max(
+        0,
+        Math.min(state.input?.duration ?? 0, action.payload.current)
+      ) as Second;
+      state.editor.current = next;
     },
     segmentMoved: (
       state,
