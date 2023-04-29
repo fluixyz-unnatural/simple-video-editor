@@ -1,0 +1,56 @@
+
+.editor {
+  display: grid;
+  grid-template-columns: calc(80% - 4px) 20%;
+  grid-template-rows: min-content min-content min-content;
+  grid-template-areas: "tool tool" "pre pre" "tl ctl";
+
+  gap: 4px;
+  & div {
+    min-width: 10px;
+    min-height: 10px;
+    background-color: #eeeeee;
+  }
+
+  .toolbar {
+    grid-area: tool;
+    width: 100vw;
+    height: 32px;
+  }
+
+  .preview {
+    position: relative;
+    grid-area: pre;
+    margin: 32px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+
+    & button.play {
+      padding: 8px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    & video {
+      position: absolute;
+      height: 100%;
+      aspect-ratio: 16/9;
+      background-color: gray;
+    }
+  }
+  .timeline {
+    grid-area: tl;
+    height: 300px;
+  }
+  .control {
+    grid-area: ctl;
+    grid-shrink: 1;
+  }
+}
+
+input {
+  padding: 10px;
+}
