@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Segment, Second, TlDisplayPx } from "../../../domains/unit";
+import { Segment, Second, DisplayPx } from "../../../domains/unit";
 import { segmentMoved } from "../../../models/simpleEditor/editor";
 import { DragHandlers, useDrag } from "../../utils/useDrag";
 import { TimelineItemProps } from "./type";
@@ -20,11 +20,7 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
   const dispatch = useDispatch();
   const onDrag = useCallback(
     (e: React.MouseEvent<unknown, MouseEvent>, type: "start" | "end") => {
-      const deltaSecond = width2dur(
-        e.movementX as TlDisplayPx,
-        canvas,
-        duration
-      );
+      const deltaSecond = width2dur(e.movementX as DisplayPx, canvas, duration);
       console.log(deltaSecond);
       dispatch(segmentMoved({ type: type, delta: deltaSecond }));
     },

@@ -6,7 +6,7 @@ export type Second = Branded<number, "_second">;
 // pixel
 export type VideoPx = Branded<number, "video_pixel">;
 export type PreviewPx = Branded<number, "preview_pixel">;
-export type TlDisplayPx = Branded<number, "timeline display pixel">;
+export type DisplayPx = Branded<number, "timeline display pixel">;
 export type TlSvgPx = Branded<number, "timeline svg pixel">;
 
 // geometry

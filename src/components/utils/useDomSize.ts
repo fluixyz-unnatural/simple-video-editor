@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { AreaSize, TlDisplayPx } from "../../domains/unit";
+import { AreaSize, DisplayPx } from "../../domains/unit";
 
 export const useDomSize = <T extends Element>() => {
   const ref = useRef<T>(null);
-  const [size, setSize] = useState<AreaSize<TlDisplayPx>>({
-    width: 0,
-    height: 0,
-  } as AreaSize<TlDisplayPx>);
+  const [size, setSize] = useState<AreaSize<DisplayPx>>();
   useEffect(() => {
     if (ref.current) {
       const rect = ref.current.getBoundingClientRect();
       setSize({
         width: rect.width,
         height: rect.height,
-      } as AreaSize<TlDisplayPx>);
+      } as AreaSize<DisplayPx>);
     }
   }, [ref]);
   return { ref, size };

@@ -7,9 +7,9 @@ export type DragHandlers = {
   onMouseUp: () => void;
 };
 
-export const useDrag = (
-  onDragging: (e: React.MouseEvent<unknown, MouseEvent>) => void
-) => {
+export type DragHandler = (e: React.MouseEvent<unknown, MouseEvent>) => void;
+
+export const useDrag = (onDragging: DragHandler) => {
   const dragging = useRef<boolean>(false);
 
   const onMouseDown = useCallback(() => {
@@ -34,7 +34,7 @@ export const useDrag = (
       onMouseLeave,
       onMouseMove,
       onMouseUp: onMouseLeave,
-    } ,
+    },
     dragging: dragging,
   };
 };

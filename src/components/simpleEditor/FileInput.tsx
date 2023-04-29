@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { inputAdded } from "../../models/simpleEditor/editor";
-import { Second } from "../../domains/unit";
+import { AxisX, AxisY, Second, VideoPx } from "../../domains/unit";
 
 export const FileInput = () => {
   const dispatch = useDispatch();
@@ -15,9 +15,13 @@ export const FileInput = () => {
         video.src = url;
         video.ondurationchange = (e) => {
           const duration = (e.target as HTMLVideoElement).duration as Second;
+          const size = {
+            width: video.videoWidth as AxisX<VideoPx>,
+            height: video.videoHeight as AxisY<VideoPx>,
+          };
           dispatch(
             inputAdded({
-              input: { link: url, duration: duration },
+              input: { link: url, duration: duration, size },
             })
           );
         };

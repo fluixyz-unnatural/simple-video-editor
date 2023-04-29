@@ -1,17 +1,13 @@
-import { TlDisplayPx, Second } from "../../../../domains/unit";
+import { DisplayPx, Second } from "../../../../domains/unit";
 import { Canvas } from "../../Timeline";
 
-export const px2second = (
-  px: TlDisplayPx,
-  canvas: Canvas,
-  duration: Second
-) => {
+export const px2second = (px: DisplayPx, canvas: Canvas, duration: Second) => {
   return ((px / canvas.width / canvas.scale) * duration +
     canvas.offset) as Second;
 };
 
 export const width2dur = (
-  width: TlDisplayPx,
+  width: DisplayPx,
   canvas: Canvas,
   duration: Second
 ) => {
@@ -21,15 +17,15 @@ export const width2dur = (
 export const second2px = (sec: Second, canvas: Canvas, duration: Second) => {
   return (((sec - canvas.offset) / duration) *
     canvas.width *
-    canvas.scale) as TlDisplayPx;
+    canvas.scale) as DisplayPx;
 };
 
 export const dur2width = (dur: Second, canvas: Canvas, duration: Second) => {
-  return (canvas.scale * (dur / duration) * canvas.width) as TlDisplayPx;
+  return (canvas.scale * (dur / duration) * canvas.width) as DisplayPx;
 };
 
 export const calcOffset = (
-  x: TlDisplayPx,
+  x: DisplayPx,
   sec: Second,
   canvas: Omit<Canvas, "offset">,
   duration: Second

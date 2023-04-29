@@ -12,6 +12,7 @@ import { PlayButton } from "./PlayButton";
 import { Preview } from "./Preview";
 import { saveAsMp4 } from "../../domains/ffmpeg/save";
 import { SetSegmentButton } from "./SetSegmentButton";
+import { CropEditor } from "./cropEditor/CropEditor";
 
 export const SimpleEditor = () => {
   const state = useSelector<SimpleEditorState, SimpleEditorState>(
@@ -52,9 +53,10 @@ export const SimpleEditor = () => {
   useRequestAnimationFrame(trackCurrentTime);
 
   return (
-    <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-4">
+    <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-8">
       <div className="relative aspect-video w-full bg-gray-200">
         {state.input && <Preview ref={video} src={state.input.link} />}
+        <CropEditor />
       </div>
       <div className="flex gap-4">
         <PlayButton

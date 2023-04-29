@@ -1,10 +1,18 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Area, Second, Segment, VideoPx } from "../../domains/unit";
+import {
+  Area,
+  AreaSize,
+  Position,
+  Second,
+  Segment,
+  VideoPx,
+} from "../../domains/unit";
 
 export type SimpleEditorState = {
   input?: {
     link: string;
     duration: Second;
+    size: AreaSize<VideoPx>;
   };
   options: {
     segment: Segment<Second>;
@@ -32,9 +40,18 @@ const simpleEditorSlice = createSlice({
       state,
       action: PayloadAction<{ input: SimpleEditorState["input"] }>
     ) => {
-      state.input = action.payload.input;
-      state.options.segment.end =
-        action.payload.input?.duration ?? (0 as Second);
+      const { input } = action.payload;
+      state.input = input;
+      if (input === undefined) return;
+      const bottomRight = {
+        x: input.size.width,
+        y: input.size.height,
+      };
+      state.options.segment.end = input.duration;
+      state.options.crop = {
+        start: { x: 0, y: 0 } as Position<VideoPx>,
+        end: bottomRight,
+      };
     },
     currentChanged: (state, action: PayloadAction<{ current: Second }>) => {
       const next = Math.max(

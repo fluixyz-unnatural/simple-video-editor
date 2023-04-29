@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AreaSize, Second, Segment, TlDisplayPx } from "../../domains/unit";
+import { AreaSize, Second, Segment, DisplayPx } from "../../domains/unit";
 import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
 import { calcOffset, px2second } from "./TimelineItems/utils/convert";
@@ -13,7 +13,6 @@ import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
 import { useDomSize } from "../utils/useDomSize";
-import { clearSelection } from "../utils/clearSelection";
 
 type Props = {
   duration: Second;
@@ -25,7 +24,7 @@ const TIMELINE_HEIGHT = 120;
 const TIMELINE_PY = 12;
 const tlConst = { TIMELINE_HEIGHT, TIMELINE_PY } as const;
 
-export type Canvas = AreaSize<TlDisplayPx> & { scale: number; offset: Second };
+export type Canvas = AreaSize<DisplayPx> & { scale: number; offset: Second };
 
 export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
   const dispatch = useDispatch();
@@ -35,8 +34,8 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
   const [offset, setOffset] = useState<Second>(0 as Second);
 
   const canvas = useMemo(
-    () => ({ ...size, scale, offset }),
-    [size, scale, offset]
+    () => (size ? { ...size, scale, offset } : undefined),
+    [offset, scale, size]
   );
 
   const onWheel = useCallback(
@@ -49,7 +48,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
         if (!canvas) return;
 
         const rect = parent.current.getBoundingClientRect();
-        const x = (e.pageX - rect.x) as TlDisplayPx;
+        const x = (e.pageX - rect.x) as DisplayPx;
 
         const nextScale = Math.pow(1.1, -deltaY) * scale;
         // 同じpxが同じsecになるよう offset を調整する
@@ -86,7 +85,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
         className={"relative w-full bg-gray-200"}
         style={{ height: TIMELINE_HEIGHT }}
       >
-        {canvas && (
+        {canvas !== undefined && (
           <svg
             viewBox={`0 0 ${canvas.width} ${canvas.height}`}
             className="absolute inset-0 h-full w-full bg-gray-200"
@@ -97,7 +96,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
               const pos = { x: e.pageX - rect.x, y: e.pageY - rect.y };
               dispatch(
                 currentChanged({
-                  current: px2second(pos.x as TlDisplayPx, canvas, duration),
+                  current: px2second(pos.x as DisplayPx, canvas, duration),
                 })
               );
             }}
@@ -118,7 +117,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
             <text
               x={0}
               y={TIMELINE_HEIGHT}
-              font-size="256"
+              fontSize="256"
               className="pointer-events-none selection:bg-opacity-0"
               fill="transparent"
             >
