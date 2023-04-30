@@ -5,13 +5,13 @@ export const video2display = (
   canvas: AreaSize<DisplayPx>,
   video: AreaSize<VideoPx>
 ) => {
-  return (px * (video.width / canvas.width)) as DisplayPx;
+  return (px * (canvas.width / video.width)) as DisplayPx;
 };
 
 export const display2video = (
   px: DisplayPx,
-  canvas: { width: DisplayPx; height: DisplayPx },
-  video: { width: DisplayPx; height: DisplayPx }
+  canvas: AreaSize<DisplayPx>,
+  video: AreaSize<VideoPx>
 ) => {
-  return (px * (canvas.width / video.width)) as VideoPx;
+  return (px * (video.width / canvas.width)) as VideoPx;
 };

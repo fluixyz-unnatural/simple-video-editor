@@ -1,7 +1,10 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDomSize } from "../../utils/useDomSize";
 import { CropBar } from "./CropBar";
-import { SimpleEditorState } from "../../../models/simpleEditor/editor";
+import {
+  SimpleEditorState,
+  cropBarDragged,
+} from "../../../models/simpleEditor/editor";
 import { AreaSize, DisplayPx, VideoPx } from "../../../domains/unit";
 import { video2display } from "./convert";
 import {
@@ -48,16 +51,15 @@ export const CropEditor = () => {
     []
   );
 
-  const size = useMemo(
-    () =>
-      paddedSize
-        ? ({
-            width: paddedSize.width - 32,
-            height: paddedSize.height - 32,
-          } as AreaSize<DisplayPx>)
-        : undefined,
-    [paddedSize]
-  );
+  const size = useMemo(() => {
+    console.log("size memo changed");
+    return paddedSize
+      ? ({
+          width: paddedSize.width - 32,
+          height: paddedSize.height - 32,
+        } as AreaSize<DisplayPx>)
+      : undefined;
+  }, [paddedSize]);
 
   const crops = useMemo(() => {
     return size && video
@@ -85,15 +87,22 @@ export const CropEditor = () => {
   )
     return <Wrapper ref={ref} />;
 
+  console.log("editor canvas", size.height);
   return (
     <Wrapper ref={ref}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="bg-red bg-opacity h-full w-full"
         viewBox={`-16 -16 ${paddedSize.width} ${paddedSize.height}`}
+        onMouseMove={(ev) => dragMoves.map((f) => f(ev))}
+        onMouseUp={() => dragUps.map((f) => f())}
+        onMouseLeave={() => dragLeaves.map((f) => f())}
       >
         {(["left", "top", "bottom", "right"] as const).map((e) => (
           <CropBar
+            canvas={size}
+            video={video}
+            key={e}
             type={e}
             crop={crops}
             stroke="#222"

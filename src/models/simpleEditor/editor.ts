@@ -2,11 +2,14 @@ import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   Area,
   AreaSize,
+  AxisX,
+  AxisY,
   Position,
   Second,
   Segment,
   VideoPx,
 } from "../../domains/unit";
+import { Dim } from "../../components/simpleEditor/cropEditor/CropBar";
 
 export type SimpleEditorState = {
   input?: {
@@ -75,9 +78,39 @@ const simpleEditorSlice = createSlice({
       const { type, time } = action.payload;
       state.options.segment[type] = time;
     },
+    cropBarDragged: (
+      state,
+      action: PayloadAction<{ dim: Dim; delta: VideoPx }>
+    ) => {
+      const { dim, delta } = action.payload;
+      switch (dim) {
+        case "left":
+          state.options.crop.start.x = (state.options.crop.start.x +
+            delta) as AxisX<VideoPx>;
+          break;
+        case "top":
+          state.options.crop.start.y = (state.options.crop.start.y +
+            delta) as AxisY<VideoPx>;
+          break;
+        case "bottom":
+          console.log(delta);
+          state.options.crop.end.y = (state.options.crop.end.y +
+            delta) as AxisY<VideoPx>;
+          break;
+        case "right":
+          state.options.crop.start.x = (state.options.crop.end.x +
+            delta) as AxisX<VideoPx>;
+          break;
+      }
+    },
   },
 });
 
-export const { inputAdded, currentChanged, segmentMoved, segmentChanged } =
-  simpleEditorSlice.actions;
+export const {
+  inputAdded,
+  currentChanged,
+  segmentMoved,
+  segmentChanged,
+  cropBarDragged,
+} = simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);

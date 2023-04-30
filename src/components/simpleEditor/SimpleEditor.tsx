@@ -54,7 +54,7 @@ export const SimpleEditor = () => {
 
   return (
     <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-8">
-      <div className="relative aspect-video w-full bg-gray-200">
+      <div className="relative  bg-gray-200">
         {state.input && <Preview ref={video} src={state.input.link} />}
         <CropEditor />
       </div>

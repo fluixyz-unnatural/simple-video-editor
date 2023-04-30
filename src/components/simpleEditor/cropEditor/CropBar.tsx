@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect } from "react";
 import { DragHandler, useDrag } from "../../utils/useDrag";
 import { useDispatch } from "react-redux";
-import { DisplayPx } from "../../../domains/unit";
+import { AreaSize, DisplayPx, VideoPx } from "../../../domains/unit";
+import { cropBarDragged } from "../../../models/simpleEditor/editor";
+import { display2video } from "./convert";
 
 type Voids = (() => void)[];
 
 const dims = ["left", "top", "right", "bottom"] as const;
+export type Dim = (typeof dims)[number];
 
 type LinePos = "x1" | "x2" | "y1" | "y2";
 type Props = Omit<React.SVGAttributes<SVGLineElement>, LinePos> & {
@@ -16,13 +19,52 @@ type Props = Omit<React.SVGAttributes<SVGLineElement>, LinePos> & {
     setDragMoves: React.Dispatch<React.SetStateAction<DragHandler[]>>;
   };
   crop: { [key in (typeof dims)[number]]: DisplayPx };
+  canvas: AreaSize<DisplayPx>;
+  video: AreaSize<VideoPx>;
 };
 
-export const CropBar: React.FC<Props> = ({ crop, type, setters, ...props }) => {
+export const CropBar: React.FC<Props> = ({
+  canvas,
+  video,
+  crop,
+  type,
+  setters,
+  ...props
+}) => {
   const dispatch = useDispatch();
-  const onDragging: DragHandler = useCallback((e) => {
-    type;
-  }, []);
+
+  console.log("cropbar canvas", canvas.height, type);
+
+  const onDragging: DragHandler = useCallback(
+    (e) => {
+      console.log("before dragging: canvas", canvas);
+
+      if (type === "left" || type === "right") {
+        console.log(
+          type,
+          display2video(e.movementX as DisplayPx, canvas, video)
+        );
+        dispatch(
+          cropBarDragged({
+            dim: type,
+            delta: display2video(e.movementX as DisplayPx, canvas, video),
+          })
+        );
+      } else {
+        console.log(
+          type,
+          display2video(e.movementY as DisplayPx, canvas, video)
+        );
+        dispatch(
+          cropBarDragged({
+            dim: type,
+            delta: display2video(e.movementY as DisplayPx, canvas, video),
+          })
+        );
+      }
+    },
+    [canvas, dispatch, type, video]
+  );
   const { handlers } = useDrag(onDragging);
 
   const linePos = { x1: 0, x2: 0, y1: 0, y2: 0 };

@@ -8,5 +8,5 @@ export const Preview = forwardRef<HTMLVideoElement, Props>(function Preview(
   props,
   ref
 ) {
-  return <video ref={ref} src={props.src} className="aspect-video w-full" />;
+  return <video ref={ref} src={props.src} className="m-auto aspect-video" />;
 });

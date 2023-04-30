@@ -1,6 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Area, Position, Second, Segment, VideoPx } from "../../domains/unit";
 import { v4 as uuidv4 } from "uuid";
+import { Dim } from "../../components/simpleEditor/cropEditor/CropBar";
 
 export type Material = {
   link: string; // materialAdded により追加される
