@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { DragHandler, useDrag } from "../../utils/useDrag";
 import { useDispatch } from "react-redux";
 import { AreaSize, DisplayPx, VideoPx } from "../../../domains/unit";
 import { cropBarDragged } from "../../../models/simpleEditor/editor";
 import { display2video } from "./convert";
 
-type Voids = (() => void)[];
+type Handlers<T> = { [key in Dim]?: T };
 
 const dims = ["left", "top", "right", "bottom"] as const;
 export type Dim = (typeof dims)[number];
@@ -14,9 +14,9 @@ type LinePos = "x1" | "x2" | "y1" | "y2";
 type Props = Omit<React.SVGAttributes<SVGLineElement>, LinePos> & {
   type: (typeof dims)[number];
   setters: {
-    setDragLeaves: React.Dispatch<React.SetStateAction<Voids>>;
-    setDragUps: React.Dispatch<React.SetStateAction<Voids>>;
-    setDragMoves: React.Dispatch<React.SetStateAction<DragHandler[]>>;
+    setDragLeaves: React.Dispatch<React.SetStateAction<Handlers<() => void>>>;
+    setDragUps: React.Dispatch<React.SetStateAction<Handlers<() => void>>>;
+    setDragMoves: React.Dispatch<React.SetStateAction<Handlers<DragHandler>>>;
   };
   crop: { [key in (typeof dims)[number]]: DisplayPx };
   canvas: AreaSize<DisplayPx>;
@@ -33,37 +33,33 @@ export const CropBar: React.FC<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
-  console.log("cropbar canvas", canvas.height, type);
+  const d2v = useMemo(() => {
+    return (px: DisplayPx): VideoPx => {
+      return display2video(px, canvas, video);
+    };
+  }, [canvas, video]);
 
   const onDragging: DragHandler = useCallback(
     (e) => {
-      console.log("before dragging: canvas", canvas);
-
+      const vx = d2v(e.movementX as DisplayPx);
+      const vy = d2v(e.movementY as DisplayPx);
       if (type === "left" || type === "right") {
-        console.log(
-          type,
-          display2video(e.movementX as DisplayPx, canvas, video)
-        );
         dispatch(
           cropBarDragged({
             dim: type,
-            delta: display2video(e.movementX as DisplayPx, canvas, video),
+            delta: vx,
           })
         );
       } else {
-        console.log(
-          type,
-          display2video(e.movementY as DisplayPx, canvas, video)
-        );
         dispatch(
           cropBarDragged({
             dim: type,
-            delta: display2video(e.movementY as DisplayPx, canvas, video),
+            delta: vy,
           })
         );
       }
     },
-    [canvas, dispatch, type, video]
+    [d2v, dispatch, type]
   );
   const { handlers } = useDrag(onDragging);
 
@@ -93,14 +89,23 @@ export const CropBar: React.FC<Props> = ({
   const cx = (Number(linePos.x1) + Number(linePos.x2)) / 2;
 
   useEffect(() => {
-    setters.setDragLeaves((prev) => [handlers.onMouseLeave, ...prev]);
-  }, [handlers.onMouseLeave, setters]);
+    setters.setDragLeaves((prev) => ({
+      ...prev,
+      [type]: handlers.onMouseLeave,
+    }));
+  }, [handlers.onMouseLeave, setters, type]);
   useEffect(() => {
-    setters.setDragUps((prev) => [handlers.onMouseUp, ...prev]);
-  }, [handlers.onMouseUp, setters]);
+    setters.setDragUps((prev) => ({
+      ...prev,
+      [type]: handlers.onMouseUp,
+    }));
+  }, [handlers.onMouseUp, setters, type]);
   useEffect(() => {
-    setters.setDragMoves((prev) => [handlers.onMouseMove, ...prev]);
-  }, [handlers.onMouseMove, setters]);
+    setters.setDragMoves((prev) => ({
+      ...prev,
+      [type]: handlers.onMouseMove,
+    }));
+  }, [handlers.onMouseMove, setters, type]);
 
   return (
     <g

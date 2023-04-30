@@ -27,7 +27,6 @@ export const SimpleEditor = () => {
   const video = useRef<HTMLVideoElement>(null);
 
   const togglePlay = useCallback(async () => {
-    console.log("effect");
     if (video.current) {
       if (playing && !playingRef.current) {
         playingRef.current = true;

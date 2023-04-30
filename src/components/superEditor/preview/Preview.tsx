@@ -1,7 +1,12 @@
 import { useRef, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Second } from "../../../domains/unit";
-import { EditorState, currentProceeded, durationChanged, newMaterialItemAdded } from "../../../models/editor/editor";
+import {
+  EditorState,
+  currentProceeded,
+  durationChanged,
+  newMaterialItemAdded,
+} from "../../../models/editor/editor";
 import { useRequestAnimationFrame } from "../../utils/requestAnimationFrame";
 import { inSegment } from "../../utils/time";
 
@@ -45,9 +50,7 @@ export const Preview = () => {
     const setTime = async () => {
       if (activeVideo.current) {
         activeVideo.current.currentTime = viewing.currentTime;
-        console.log("delta1", viewing.currentTime);
         await activeVideo.current.play();
-        console.log("delta2", viewing.currentTime);
       }
       return;
     };

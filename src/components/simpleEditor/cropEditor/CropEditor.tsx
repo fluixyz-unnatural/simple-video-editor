@@ -1,19 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useDomSize } from "../../utils/useDomSize";
-import { CropBar } from "./CropBar";
-import {
-  SimpleEditorState,
-  cropBarDragged,
-} from "../../../models/simpleEditor/editor";
+import { CropBar, Dim } from "./CropBar";
+import { SimpleEditorState } from "../../../models/simpleEditor/editor";
 import { AreaSize, DisplayPx, VideoPx } from "../../../domains/unit";
 import { video2display } from "./convert";
-import {
-  PropsWithChildren,
-  forwardRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { PropsWithChildren, forwardRef, useMemo, useState } from "react";
 import { DragHandler } from "../../utils/useDrag";
 
 type State = {
@@ -40,11 +31,14 @@ export const CropEditor = () => {
       crop: state.options.crop,
     };
   });
-  type VoidFunction = () => void;
 
-  const [dragLeaves, setDragLeaves] = useState<VoidFunction[]>([]);
-  const [dragUps, setDragUps] = useState<VoidFunction[]>([]);
-  const [dragMoves, setDragMoves] = useState<DragHandler[]>([]);
+  const [dragLeaves, setDragLeaves] = useState<{ [key in Dim]?: () => void }>(
+    {}
+  );
+  const [dragUps, setDragUps] = useState<{ [key in Dim]?: () => void }>({});
+  const [dragMoves, setDragMoves] = useState<{ [key in Dim]?: DragHandler }>(
+    {}
+  );
 
   const setters = useMemo(
     () => ({ setDragLeaves, setDragUps, setDragMoves }),
@@ -52,7 +46,6 @@ export const CropEditor = () => {
   );
 
   const size = useMemo(() => {
-    console.log("size memo changed");
     return paddedSize
       ? ({
           width: paddedSize.width - 32,
@@ -72,13 +65,6 @@ export const CropEditor = () => {
       : undefined;
   }, [crop.end.x, crop.end.y, crop.start.x, crop.start.y, size, video]);
 
-  useEffect(() => {
-    console.log("setters");
-  }, [setters]);
-  useEffect(() => {
-    console.log("crops");
-  }, [crops]);
-
   if (
     crops === undefined ||
     size === undefined ||
@@ -87,16 +73,31 @@ export const CropEditor = () => {
   )
     return <Wrapper ref={ref} />;
 
-  console.log("editor canvas", size.height);
   return (
     <Wrapper ref={ref}>
+      <div className="pointer-events-none absolute inset-0 h-fit w-fit select-none bg-white bg-opacity-80 p-2">
+        crop: {JSON.stringify(crop)}
+        <br />
+        canvas: {JSON.stringify(size)}
+        <br />
+        video: {JSON.stringify(video)}
+        <br />
+      </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="bg-red bg-opacity h-full w-full"
         viewBox={`-16 -16 ${paddedSize.width} ${paddedSize.height}`}
-        onMouseMove={(ev) => dragMoves.map((f) => f(ev))}
-        onMouseUp={() => dragUps.map((f) => f())}
-        onMouseLeave={() => dragLeaves.map((f) => f())}
+        onMouseMove={(ev) => {
+          for (const [, val] of Object.entries(dragMoves)) {
+            val(ev);
+          }
+        }}
+        onMouseUp={() => {
+          for (const [, val] of Object.entries(dragUps)) val();
+        }}
+        onMouseLeave={() => {
+          for (const [, val] of Object.entries(dragLeaves)) val();
+        }}
       >
         {(["left", "top", "bottom", "right"] as const).map((e) => (
           <CropBar

@@ -21,7 +21,6 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
   const onDrag = useCallback(
     (e: React.MouseEvent<unknown, MouseEvent>, type: "start" | "end") => {
       const deltaSecond = width2dur(e.movementX as DisplayPx, canvas, duration);
-      console.log(deltaSecond);
       dispatch(segmentMoved({ type: type, delta: deltaSecond }));
     },
     [canvas, dispatch, duration]
@@ -43,7 +42,6 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
         endHandlers.onMouseMove(e);
       }}
       onClick={(e) => {
-        console.log("click");
         if (startDragging.current || endDragging.current) e.stopPropagation();
         // dragging によってstopPropagationをやる。
         // マウスイベントはonUp -> onClickの順で発火する

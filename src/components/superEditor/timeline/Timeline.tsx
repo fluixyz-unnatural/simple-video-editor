@@ -54,7 +54,6 @@ export const Timeline = () => {
             y: e.pageY - top,
           } as Position<DisplayPx>;
           dispatch(currentChanged({ current: pos2time(pos.x, viewBox) }));
-          console.log(pos);
         }}
       >
         {/* overlay */}

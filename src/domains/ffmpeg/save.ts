@@ -68,7 +68,6 @@ export const saveAsMp4 = async (
   commands.push("-to", `${options.segment.end}`);
 
   commands.push(options.output);
-  console.log(commands);
   await ffmpeg.run(...commands);
 
   const data = ffmpeg.FS("readFile", options.output);

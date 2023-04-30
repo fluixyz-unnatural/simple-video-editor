@@ -11,10 +11,6 @@ export const useDomSize = <T extends Element>() => {
         width: rect.width,
         height: rect.height,
       } as AreaSize<DisplayPx>);
-      console.log("dom size changed", {
-        width: rect.width,
-        height: rect.height,
-      });
     }
   }, [ref]);
   useEffect(() => {

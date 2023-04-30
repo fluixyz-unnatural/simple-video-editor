@@ -27,17 +27,33 @@ export type SimpleEditorState = {
   };
 };
 
+const initialState = {
+  input: undefined,
+  options: {
+    segment: { start: 0, end: 0 } as Segment<Second>,
+    crop: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } } as Area<VideoPx>,
+    output: "output.gif",
+  },
+  editor: { current: 0 as Second },
+} as SimpleEditorState;
+
+const mockState: SimpleEditorState = {
+  input: {
+    duration: 11,
+    link: "/7seg.mp4",
+    size: { width: 1280, height: 720 },
+  },
+  options: {
+    segment: { start: 0, end: 0 },
+    crop: { start: { x: 0, y: 0 }, end: { x: 1280, y: 720 } },
+    output: "output.mp4",
+  },
+  editor: { current: 0 },
+} as SimpleEditorState;
+
 const simpleEditorSlice = createSlice({
   name: "simple-editor",
-  initialState: {
-    input: undefined,
-    options: {
-      segment: { start: 0, end: 0 } as Segment<Second>,
-      crop: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } } as Area<VideoPx>,
-      output: "output.gif",
-    },
-    editor: { current: 0 as Second },
-  } as SimpleEditorState,
+  initialState: initialState,
   reducers: {
     inputAdded: (
       state,
@@ -93,12 +109,11 @@ const simpleEditorSlice = createSlice({
             delta) as AxisY<VideoPx>;
           break;
         case "bottom":
-          console.log(delta);
           state.options.crop.end.y = (state.options.crop.end.y +
             delta) as AxisY<VideoPx>;
           break;
         case "right":
-          state.options.crop.start.x = (state.options.crop.end.x +
+          state.options.crop.end.x = (state.options.crop.end.x +
             delta) as AxisX<VideoPx>;
           break;
       }
