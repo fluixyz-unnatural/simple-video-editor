@@ -10,6 +10,7 @@ import {
   VideoPx,
 } from "../../domains/unit";
 import { Dim } from "../../components/simpleEditor/cropEditor/CropBar";
+import { dirxml } from "console";
 
 export type SimpleEditorState = {
   input?: {
@@ -118,6 +119,37 @@ const simpleEditorSlice = createSlice({
           break;
       }
     },
+    cropMoved: (state, action: PayloadAction<{ dx: VideoPx; dy: VideoPx }>) => {
+      if (state.input === undefined) return;
+      const { dx, dy } = action.payload;
+      const clampX = (x: AxisX<VideoPx>) => {
+        if (state.input === undefined) return x;
+        return Math.max(
+          0,
+          Math.min(x, state.input.size.width)
+        ) as AxisX<VideoPx>;
+      };
+      const clampY = (y: AxisX<VideoPx>) => {
+        if (state.input === undefined) return y;
+        return Math.max(
+          0,
+          Math.min(y, state.input.size.height)
+        ) as AxisY<VideoPx>;
+      };
+      state.options.crop.start.x = (state.options.crop.start.x +
+        dx) as AxisX<VideoPx>;
+      state.options.crop.start.y = (state.options.crop.start.y +
+        dy) as AxisY<VideoPx>;
+      state.options.crop.end.x = (state.options.crop.end.x +
+        dx) as AxisX<VideoPx>;
+      state.options.crop.end.y = (state.options.crop.end.y +
+        dy) as AxisY<VideoPx>;
+
+      state.options.crop.start.x = clampX(state.options.crop.start.x);
+      state.options.crop.end.x = clampX(state.options.crop.end.x);
+      state.options.crop.start.y = clampY(state.options.crop.start.y);
+      state.options.crop.end.y = clampY(state.options.crop.end.y);
+    },
   },
 });
 
@@ -127,5 +159,6 @@ export const {
   segmentMoved,
   segmentChanged,
   cropBarDragged,
+  cropMoved,
 } = simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);

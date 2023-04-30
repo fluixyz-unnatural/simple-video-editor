@@ -1,11 +1,21 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useDomSize } from "../../utils/useDomSize";
 import { CropBar, Dim } from "./CropBar";
-import { SimpleEditorState } from "../../../models/simpleEditor/editor";
+import {
+  SimpleEditorState,
+  cropMoved,
+} from "../../../models/simpleEditor/editor";
 import { AreaSize, DisplayPx, VideoPx } from "../../../domains/unit";
-import { video2display } from "./convert";
-import { PropsWithChildren, forwardRef, useMemo, useState } from "react";
-import { DragHandler } from "../../utils/useDrag";
+import { display2video, video2display } from "./convert";
+import {
+  PropsWithChildren,
+  forwardRef,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { DragHandler, useDrag } from "../../utils/useDrag";
+import { Shade } from "./Shade";
 
 type State = {
   video: AreaSize<VideoPx> | undefined;
@@ -24,6 +34,7 @@ const Wrapper = forwardRef<HTMLDivElement, PropsWithChildren>((props, ref) => {
 });
 
 export const CropEditor = () => {
+  const dispatch = useDispatch();
   const { ref, size: paddedSize } = useDomSize<HTMLDivElement>();
   const { video, crop } = useSelector<SimpleEditorState, State>((state) => {
     return {
@@ -65,6 +76,19 @@ export const CropEditor = () => {
       : undefined;
   }, [crop.end.x, crop.end.y, crop.start.x, crop.start.y, size, video]);
 
+  const onMove: DragHandler = useCallback(
+    (e) => {
+      console.log(e);
+      if (!size || !video) return;
+      const dx = display2video(e.movementX as DisplayPx, size, video);
+      const dy = display2video(e.movementY as DisplayPx, size, video);
+      dispatch(cropMoved({ dx, dy }));
+    },
+    [dispatch, size, video]
+  );
+
+  const { handlers } = useDrag(onMove);
+
   if (
     crops === undefined ||
     size === undefined ||
@@ -91,14 +115,27 @@ export const CropEditor = () => {
           for (const [, val] of Object.entries(dragMoves)) {
             val(ev);
           }
+          handlers.onMouseMove(ev);
         }}
         onMouseUp={() => {
           for (const [, val] of Object.entries(dragUps)) val();
+          handlers.onMouseUp();
         }}
         onMouseLeave={() => {
           for (const [, val] of Object.entries(dragLeaves)) val();
+          handlers.onMouseLeave();
         }}
       >
+        <Shade canvas={size} crops={crops} />
+        <rect
+          onMouseDown={handlers.onMouseDown}
+          className="cursor-move"
+          fill="transparent"
+          x={crops.left}
+          width={crops.right - crops.left}
+          y={crops.top}
+          height={crops.bottom - crops.top}
+        />
         {(["left", "top", "bottom", "right"] as const).map((e) => (
           <CropBar
             canvas={size}
