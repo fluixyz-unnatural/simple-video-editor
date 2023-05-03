@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { AreaSize, Second, Segment, DisplayPx } from "../../domains/unit";

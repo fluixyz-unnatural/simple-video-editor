@@ -36,7 +36,7 @@ export const Settings = () => {
           <OptionTitle>出力形式</OptionTitle>
           <label className="p-3 hover:bg-gray-50">
             <input
-              onChange={(e) => {
+              onChange={() => {
                 dispatch(
                   optionsChanged({ type: "output", value: "output.mp4" })
                 );
@@ -54,8 +54,7 @@ export const Settings = () => {
               className="mr-1"
               type="radio"
               name="format"
-              onChange={(e) => {
-                const val = e.target.value;
+              onChange={() => {
                 dispatch(
                   optionsChanged({ type: "output", value: "output.gif" })
                 );
@@ -125,7 +124,7 @@ export const Settings = () => {
               value={width ?? ""}
             ></input>
             <button
-              onClick={(e) => {
+              onClick={() => {
                 dispatch(optionsChanged({ type: "width", value: undefined }));
               }}
               className="ml-4 rounded-sm bg-slate-100 px-2 py-1 text-sm text-slate-600"

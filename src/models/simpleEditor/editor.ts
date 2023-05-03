@@ -43,22 +43,22 @@ const initialState = {
   editor: { current: 0 as Second },
 } as SimpleEditorState;
 
-const mockState: SimpleEditorState = {
-  input: {
-    duration: 11,
-    link: "/7seg.mp4",
-    size: { width: 1280, height: 720 },
-  },
-  options: {
-    segment: { start: 0, end: 0 },
-    crop: { start: { x: 0, y: 0 }, end: { x: 1280, y: 720 } },
-    output: "output.mp4",
-    copy: false,
-    rate: undefined,
-    width: undefined,
-  },
-  editor: { current: 0 },
-} as SimpleEditorState;
+// const mockState: SimpleEditorState = {
+//   input: {
+//     duration: 11,
+//     link: "/7seg.mp4",
+//     size: { width: 1280, height: 720 },
+//   },
+//   options: {
+//     segment: { start: 0, end: 0 },
+//     crop: { start: { x: 0, y: 0 }, end: { x: 1280, y: 720 } },
+//     output: "output.mp4",
+//     copy: false,
+//     rate: undefined,
+//     width: undefined,
+//   },
+//   editor: { current: 0 },
+// } as SimpleEditorState;
 
 const simpleEditorSlice = createSlice({
   name: "simple-editor",
