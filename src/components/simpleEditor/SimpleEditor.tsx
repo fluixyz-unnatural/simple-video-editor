@@ -54,6 +54,7 @@ export const SimpleEditor = () => {
 
   return (
     <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-8">
+      <FileInput />
       <div className="relative  bg-gray-200">
         {state.input && <Preview ref={video} src={state.input.link} />}
         <CropEditor />
@@ -66,14 +67,12 @@ export const SimpleEditor = () => {
         />
         <SetSegmentButton current={state.editor.current} />
       </div>
-      {state.input ? (
+      {state.input && (
         <Timeline
           current={state.editor.current}
           duration={state.input.duration}
           segment={state.options.segment}
         />
-      ) : (
-        <FileInput />
       )}
       <Settings />
       <pre>ffmpeg {option2ffmpegCommand(state.options).join(" ")}</pre>

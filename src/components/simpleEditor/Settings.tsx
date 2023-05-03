@@ -3,7 +3,7 @@ import {
   SimpleEditorState,
   optionsChanged,
 } from "../../models/simpleEditor/editor";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 
 const OptionTitle: React.FC<PropsWithChildren> = ({ children }) => (
   <h3 className="my-6 inline-block h-fit w-24 font-bold">{children}</h3>
@@ -16,11 +16,22 @@ export const Settings = () => {
   >((state) => state.options);
 
   const dispatch = useDispatch();
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div className="w-full">
-      <h2 className="mb-3 text-lg font-bold">詳細設定</h2>
-      <div className="flex flex-col divide-y divide-solid px-4 ">
+      {/* accessibility.... */}{" "}
+      <button
+        className="w-full text-left"
+        onClick={() => setOpen((state) => !state)}
+      >
+        <h2 className="mb-3 w-full border-b-2 border-solid py-2 text-lg font-bold">
+          詳細設定 {open ? "🔺" : "🔻"}
+        </h2>
+      </button>
+      <div
+        className={open ? "flex flex-col divide-y divide-solid px-4" : "hidden"}
+      >
         <div className="flex items-center">
           <OptionTitle>出力形式</OptionTitle>
           <label className="p-3 hover:bg-gray-50">

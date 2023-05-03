@@ -99,7 +99,7 @@ export const CropEditor = () => {
 
   return (
     <Wrapper ref={ref}>
-      <div className="pointer-events-none absolute inset-0 h-fit w-fit select-none bg-white bg-opacity-80 p-2">
+      <div className="pointer-events-none absolute inset-0 hidden h-fit w-fit select-none bg-white bg-opacity-80 p-2">
         crop: {JSON.stringify(crop)}
         <br />
         canvas: {JSON.stringify(size)}
