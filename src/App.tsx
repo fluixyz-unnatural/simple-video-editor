@@ -35,6 +35,12 @@ function App() {
           }}
         ></div> */}
       </div>
+      <div className="p-4 text-right text-slate-500">
+        created by
+        <a href="https://twitter.com/higara333" target="_blank">
+          @higara333
+        </a>
+      </div>
     </Provider>
   );
 }

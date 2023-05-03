@@ -37,7 +37,6 @@ export const Settings = () => {
           <label className="p-3 hover:bg-gray-50">
             <input
               onChange={(e) => {
-                const val = e.target.value;
                 dispatch(
                   optionsChanged({ type: "output", value: "output.mp4" })
                 );
@@ -84,40 +83,46 @@ export const Settings = () => {
             />
             コピー
           </label>
+          <p className="ml-auto text-sm text-red-600">※適切に使わないと出力に失敗します</p>
         </div>
-        <div>
+        <div className="flex items-center">
           <label>
             <OptionTitle>フレームレート</OptionTitle>
             <input
               onChange={(e) => {
+                if (e.target.value === "") return;
                 const val = parseInt(e.target.value);
                 dispatch(optionsChanged({ type: "rate", value: val }));
               }}
               className="ml-2 rounded-md border-2 border-solid border-teal-200 p-1"
               type="number"
-              value={rate ?? "--"}
+              value={rate ?? ""}
             ></input>
             <button
               onClick={() => {
                 dispatch(optionsChanged({ type: "rate", value: undefined }));
               }}
-              className="ml-4 rounded-sm bg-slate-100 px-2 py-1 text-sm text-slate-600"
+              className="ml- rounded-sm bg-slate-100 px-2 py-1 text-sm text-slate-600"
             >
               クリア
             </button>
           </label>
+          <p className="ml-auto text-sm text-slate-500">
+            未設定のときは入力ファイル通りになります
+          </p>
         </div>
-        <div>
+        <div className="flex items-center">
           <label>
             <OptionTitle>映像サイズ</OptionTitle>
             <input
               onChange={(e) => {
+                if (e.target.value === "") return;
                 const val = parseInt(e.target.value);
                 dispatch(optionsChanged({ type: "width", value: val }));
               }}
               className="ml-2 rounded-md border-2 border-solid border-teal-200 p-1"
               type="number"
-              value={width ?? "--"}
+              value={width ?? ""}
             ></input>
             <button
               onClick={(e) => {
@@ -128,6 +133,9 @@ export const Settings = () => {
               クリア
             </button>
           </label>
+          <p className="ml-auto text-sm text-slate-500">
+            未設定のときは入力ファイル通りになります
+          </p>
         </div>
       </div>
     </div>

@@ -10,10 +10,11 @@ import { FileInput } from "./FileInput";
 import { Timeline } from "./Timeline";
 import { PlayButton } from "./PlayButton";
 import { Preview } from "./Preview";
-import { saveAsMp4 } from "../../domains/ffmpeg/save";
+import { options2command, saveAsMp4 } from "../../domains/ffmpeg/save";
 import { SetSegmentButton } from "./SetSegmentButton";
 import { CropEditor } from "./cropEditor/CropEditor";
 import { Settings } from "./Settings";
+import { Button } from "../Button";
 
 export const SimpleEditor = () => {
   const state = useSelector<SimpleEditorState, SimpleEditorState>(
@@ -26,6 +27,8 @@ export const SimpleEditor = () => {
   // 再生操作が非同期であることに対処するため、実際再生中 or 再生準備中かを示す変数
   const playingRef = useRef<boolean>(false);
   const video = useRef<HTMLVideoElement>(null);
+
+  const [processing, setProcessing] = useState<boolean>(false);
 
   const togglePlay = useCallback(async () => {
     if (video.current) {
@@ -53,7 +56,7 @@ export const SimpleEditor = () => {
   useRequestAnimationFrame(trackCurrentTime);
 
   return (
-    <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-8">
+    <div className="m-auto mt-8 flex w-[640px] flex-col items-center gap-8 pb-32">
       <FileInput />
       <div className="relative  bg-gray-200">
         {state.input && <Preview ref={video} src={state.input.link} />}
@@ -75,51 +78,27 @@ export const SimpleEditor = () => {
         />
       )}
       <Settings />
-      <pre>ffmpeg {option2ffmpegCommand(state.options).join(" ")}</pre>
-      <button
-        onClick={() =>
-          state.input && saveAsMp4(state.options, state.input.link)
-        }
-        disabled={state.input === undefined}
-        className="rounded-lg bg-teal-500 p-2 px-4 text-white hover:bg-teal-600 active:bg-teal-700 disabled:pointer-events-none disabled:opacity-30"
+      <pre className="overflow-auto border-2 border-solid border-slate-300 p-4 text-slate-700">
+        {state.input
+          ? "ffmpeg " + options2command(state.options, "[input]").join(" ")
+          : "commands will display here"}
+      </pre>
+      <Button
+        onClick={async () => {
+          if (!state.input) return;
+          setProcessing(true);
+          try {
+            await saveAsMp4(state.options, state.input.link);
+          } catch (e) {
+            alert("encode failed");
+          }
+          setProcessing(false);
+        }}
+        disabled={state.input === undefined || processing}
+        fill
       >
-        output
-      </button>
+        {processing ? "processing..." : "OUTPUT"}
+      </Button>
     </div>
   );
-};
-
-const option2ffmpegCommand = (
-  options: SimpleEditorState["options"]
-): string[] => {
-  /*
-    使えるようにしたいオプション
-
-    範囲 -ss x -to or -ss x -t
-    -ss [duration] : 出力に含める動画の開始時間
-    -to [duration] : 出力に含める動画の終了時間
-    -t [duration] : 動画の長さ
-
-    -r: フレームレート
-    -s: サイズ 640x480など
-    -croptop, -cropbottom, -cropleft, -cropright
-      : クロップ
-    -an: ミュート
-    -crf: 品質
-
-    オプションじゃないけどgif出力もあったほうがいい
-  */
-  return [
-    "-i",
-    "[input]",
-    "-ss",
-    `${chottoRounded(options.segment.start)}`,
-    "-to",
-    `${chottoRounded(options.segment.end)}`,
-    options.output,
-  ];
-};
-
-const chottoRounded = (a: number) => {
-  return Math.round(a * 100) / 100;
 };

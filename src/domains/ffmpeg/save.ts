@@ -24,6 +24,7 @@ export const saveAsMp4fromItems = async (
   // ひとまずitemsが一つである前提で作る
   // itemsが複数になったら各itemからitem${}.mp4を生成 → concat -c でつなげる
   await ffmpeg.run("-i", name, "output.mp4");
+
   /*
     使えるようにしたいオプション
 
@@ -41,7 +42,7 @@ export const saveAsMp4fromItems = async (
 
     オプションじゃないけどgif出力もあったほうがいい
   */
-
+  
   const data = ffmpeg.FS("readFile", "output.mp4");
   const url = URL.createObjectURL(
     new Blob([data.buffer], { type: "video/mp4" })
@@ -62,12 +63,7 @@ export const saveAsMp4 = async (
   const inputFileName = "input";
   await ffmpeg.FS("writeFile", inputFileName, await fetchFile(input));
 
-  const commands = ["-i", inputFileName];
-
-  commands.push("-ss", `${options.segment.start}`);
-  commands.push("-to", `${options.segment.end}`);
-
-  commands.push(options.output);
+  const commands = options2command(options, inputFileName);
   await ffmpeg.run(...commands);
 
   const data = ffmpeg.FS("readFile", options.output);
@@ -79,4 +75,50 @@ export const saveAsMp4 = async (
   const fileName = options.output;
   link.download = fileName;
   link.click();
+};
+
+export const options2command = (
+  options: SimpleEditorState["options"],
+  filename: string
+): string[] => {
+  const commands = ["-i", filename];
+
+  // segment
+  commands.push("-ss", `${chottoRounded(options.segment.start)}`);
+  commands.push("-to", `${chottoRounded(options.segment.end)}`);
+
+  // copy
+  if (options.copy) commands.push("-c:v", "copy", "-c:a", "copy");
+
+  // rate
+  if (options.rate) commands.push("-r", `${options.rate}`);
+
+  // width
+  let scale = undefined;
+  if (options.width) scale = `scale=${options.width}:-1`;
+
+  const c = options.crop;
+  const crop = `crop=${c.end.x - c.start.x}:${c.end.y - c.start.y}:${
+    c.start.x
+  }:${c.start.y}`;
+  commands.push("-vf");
+  commands.push([crop, scale].filter((e) => e).join(","));
+
+  commands.push(options.output);
+
+  return commands;
+};
+
+/*
+    使えるようにしたいオプション
+
+    -croptop, -cropbottom, -cropleft, -cropright
+      : クロップ
+    -an: ミュート
+    -crf: 品質
+
+    オプションじゃないけどgif出力もあったほうがいい
+  */
+const chottoRounded = (a: number) => {
+  return Math.round(a * 100) / 100;
 };

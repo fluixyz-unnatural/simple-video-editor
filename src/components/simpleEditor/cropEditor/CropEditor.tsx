@@ -78,7 +78,6 @@ export const CropEditor = () => {
 
   const onMove: DragHandler = useCallback(
     (e) => {
-      console.log(e);
       if (!size || !video) return;
       const dx = display2video(e.movementX as DisplayPx, size, video);
       const dy = display2video(e.movementY as DisplayPx, size, video);

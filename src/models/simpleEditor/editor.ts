@@ -35,7 +35,7 @@ const initialState = {
   options: {
     segment: { start: 0, end: 0 } as Segment<Second>,
     crop: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } } as Area<VideoPx>,
-    output: "output.gif",
+    output: "output.mp4",
     copy: false,
     rate: undefined,
     width: undefined,
