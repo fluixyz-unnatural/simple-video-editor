@@ -68,7 +68,7 @@ export const SimpleEditor = () => {
           playing={playing}
           onClick={() => setPlaying((prev) => !prev)}
         />
-        <SetSegmentButton current={state.editor.current} />
+        <SetSegmentButton disabled={!state.input} current={state.editor.current} />
       </div>
       {state.input && (
         <Timeline

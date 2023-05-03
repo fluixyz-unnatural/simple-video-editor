@@ -3,12 +3,13 @@ import { Second } from "../../domains/unit";
 import { Button } from "../Button";
 import { segmentChanged } from "../../models/simpleEditor/editor";
 
-type Props = { current: Second };
-export const SetSegmentButton: React.FC<Props> = ({ current }) => {
+type Props = { current: Second; disabled: boolean };
+export const SetSegmentButton: React.FC<Props> = ({ current, disabled }) => {
   const dispatch = useDispatch();
   return (
     <>
       <Button
+        disabled
         onClick={() => {
           dispatch(segmentChanged({ type: "start", time: current }));
         }}
@@ -18,6 +19,7 @@ export const SetSegmentButton: React.FC<Props> = ({ current }) => {
         指定
       </Button>
       <Button
+        disabled
         onClick={() => {
           dispatch(segmentChanged({ type: "end", time: current }));
         }}
