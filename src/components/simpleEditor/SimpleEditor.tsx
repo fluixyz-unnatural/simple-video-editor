@@ -91,6 +91,7 @@ export const SimpleEditor = () => {
             await saveAsMp4(state.options, state.input.link);
           } catch (e) {
             alert("encode failed");
+            console.error(e);
           }
           setProcessing(false);
         }}
