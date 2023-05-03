@@ -9,7 +9,7 @@ export const SetSegmentButton: React.FC<Props> = ({ current, disabled }) => {
   return (
     <>
       <Button
-        disabled
+        disabled={disabled}
         onClick={() => {
           dispatch(segmentChanged({ type: "start", time: current }));
         }}
@@ -19,7 +19,7 @@ export const SetSegmentButton: React.FC<Props> = ({ current, disabled }) => {
         指定
       </Button>
       <Button
-        disabled
+        disabled={disabled}
         onClick={() => {
           dispatch(segmentChanged({ type: "end", time: current }));
         }}

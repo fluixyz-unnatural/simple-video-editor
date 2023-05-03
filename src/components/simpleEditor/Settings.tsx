@@ -101,7 +101,7 @@ export const Settings = () => {
               onClick={() => {
                 dispatch(optionsChanged({ type: "rate", value: undefined }));
               }}
-              className="ml- rounded-sm bg-slate-100 px-2 py-1 text-sm text-slate-600"
+              className="ml-4 rounded-sm bg-slate-100 px-2 py-1 text-sm text-slate-600"
             >
               クリア
             </button>
@@ -112,17 +112,17 @@ export const Settings = () => {
         </div>
         <div className="flex items-center">
           <label>
-            <OptionTitle>映像サイズ</OptionTitle>
+            <OptionTitle>画面の幅</OptionTitle>
             <input
               onChange={(e) => {
                 if (e.target.value === "") return;
                 const val = parseInt(e.target.value);
                 dispatch(optionsChanged({ type: "width", value: val }));
               }}
-              className="ml-2 rounded-md border-2 border-solid border-teal-200 p-1"
+              className="ml-2 mr-1 rounded-md border-2 border-solid border-teal-200 p-1"
               type="number"
               value={width ?? ""}
-            ></input>
+            ></input>px
             <button
               onClick={() => {
                 dispatch(optionsChanged({ type: "width", value: undefined }));
