@@ -89,7 +89,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
           <svg
             viewBox={`0 0 ${canvas.width} ${canvas.height}`}
             className="absolute inset-0 h-full w-full bg-gray-200"
-            onDoubleClick={(e) => {
+            onClick={(e) => {
               // currentTime変更
               if (!parent.current) return;
               const rect = parent.current.getBoundingClientRect();

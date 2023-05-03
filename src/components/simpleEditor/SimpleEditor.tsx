@@ -13,6 +13,7 @@ import { Preview } from "./Preview";
 import { saveAsMp4 } from "../../domains/ffmpeg/save";
 import { SetSegmentButton } from "./SetSegmentButton";
 import { CropEditor } from "./cropEditor/CropEditor";
+import { Settings } from "./Settings";
 
 export const SimpleEditor = () => {
   const state = useSelector<SimpleEditorState, SimpleEditorState>(
@@ -74,6 +75,7 @@ export const SimpleEditor = () => {
       ) : (
         <FileInput />
       )}
+      <Settings />
       <pre>ffmpeg {option2ffmpegCommand(state.options).join(" ")}</pre>
       <button
         onClick={() =>

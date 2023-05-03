@@ -10,7 +10,6 @@ import {
   VideoPx,
 } from "../../domains/unit";
 import { Dim } from "../../components/simpleEditor/cropEditor/CropBar";
-import { dirxml } from "console";
 
 export type SimpleEditorState = {
   input?: {
@@ -22,6 +21,9 @@ export type SimpleEditorState = {
     segment: Segment<Second>;
     crop: Area<VideoPx>;
     output: `output.${"mp4" | "gif"}`;
+    rate: number | undefined;
+    copy: boolean;
+    width: number | undefined;
   };
   editor: {
     current: Second;
@@ -34,6 +36,9 @@ const initialState = {
     segment: { start: 0, end: 0 } as Segment<Second>,
     crop: { start: { x: 0, y: 0 }, end: { x: 0, y: 0 } } as Area<VideoPx>,
     output: "output.gif",
+    copy: false,
+    rate: undefined,
+    width: undefined,
   },
   editor: { current: 0 as Second },
 } as SimpleEditorState;
@@ -48,6 +53,9 @@ const mockState: SimpleEditorState = {
     segment: { start: 0, end: 0 },
     crop: { start: { x: 0, y: 0 }, end: { x: 1280, y: 720 } },
     output: "output.mp4",
+    copy: false,
+    rate: undefined,
+    width: undefined,
   },
   editor: { current: 0 },
 } as SimpleEditorState;
@@ -150,8 +158,42 @@ const simpleEditorSlice = createSlice({
       state.options.crop.start.y = clampY(state.options.crop.start.y);
       state.options.crop.end.y = clampY(state.options.crop.end.y);
     },
+    optionsChanged: (state, actions: PayloadAction<OptionPayload>) => {
+      // TODO 共存不可なものを設定できないようにする
+      const payload = actions.payload;
+      if (payload.type === "output") {
+        state.options.output = payload.value;
+      }
+      if (payload.type === "copy") {
+        state.options.copy = payload.value;
+      }
+      if (payload.type === "rate") {
+        state.options.rate = payload.value;
+      }
+      if (payload.type === "width") {
+        state.options.width = payload.value;
+      }
+    },
   },
 });
+
+type OptionPayload =
+  | {
+      type: "output";
+      value: SimpleEditorState["options"]["output"];
+    }
+  | {
+      type: "copy";
+      value: SimpleEditorState["options"]["copy"];
+    }
+  | {
+      type: "rate";
+      value: SimpleEditorState["options"]["rate"];
+    }
+  | {
+      type: "width";
+      value: SimpleEditorState["options"]["width"];
+    };
 
 export const {
   inputAdded,
@@ -160,5 +202,6 @@ export const {
   segmentChanged,
   cropBarDragged,
   cropMoved,
+  optionsChanged,
 } = simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);

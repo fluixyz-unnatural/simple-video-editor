@@ -12,4 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  accent-color: rgb(13 148 136);
+}
+
+label {
+  user-select: none;
 }

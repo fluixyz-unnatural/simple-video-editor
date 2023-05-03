@@ -13,14 +13,18 @@ export const SetSegmentButton: React.FC<Props> = ({ current }) => {
           dispatch(segmentChanged({ type: "start", time: current }));
         }}
       >
-        ⏮
+        開始地点
+        <br />
+        指定
       </Button>
       <Button
         onClick={() => {
           dispatch(segmentChanged({ type: "end", time: current }));
         }}
       >
-        ⏭
+        終了地点
+        <br />
+        指定
       </Button>
     </>
   );
