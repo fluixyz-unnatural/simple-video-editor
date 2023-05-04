@@ -24,6 +24,7 @@ export type SimpleEditorState = {
     rate: number | undefined;
     copy: boolean;
     width: number | undefined;
+    mute: boolean;
   };
   editor: {
     current: Second;
@@ -39,6 +40,7 @@ const initialState = {
     copy: false,
     rate: undefined,
     width: undefined,
+    mute: false,
   },
   editor: { current: 0 as Second },
 } as SimpleEditorState;
@@ -173,6 +175,9 @@ const simpleEditorSlice = createSlice({
       if (payload.type === "width") {
         state.options.width = payload.value;
       }
+      if (payload.type === "mute") {
+        state.options.mute = payload.value;
+      }
     },
   },
 });
@@ -193,6 +198,10 @@ type OptionPayload =
   | {
       type: "width";
       value: SimpleEditorState["options"]["width"];
+    }
+  | {
+      type: "mute";
+      value: SimpleEditorState["options"]["mute"];
     };
 
 export const {

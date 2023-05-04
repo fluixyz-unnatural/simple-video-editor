@@ -10,7 +10,7 @@ const OptionTitle: React.FC<PropsWithChildren> = ({ children }) => (
 );
 
 export const Settings = () => {
-  const { output, copy, rate, width } = useSelector<
+  const { output, copy, rate, width, mute } = useSelector<
     SimpleEditorState,
     SimpleEditorState["options"]
   >((state) => state.options);
@@ -20,7 +20,7 @@ export const Settings = () => {
 
   return (
     <div className="w-full">
-      {/* accessibility.... */}{" "}
+      {/* accessibility.... */}
       <button
         className="w-full text-left"
         onClick={() => setOpen((state) => !state)}
@@ -68,7 +68,6 @@ export const Settings = () => {
           <label className="p-3">
             <input
               onChange={(e) => {
-                console.log(e.target.value);
                 dispatch(
                   optionsChanged({
                     type: "copy",
@@ -82,7 +81,28 @@ export const Settings = () => {
             />
             コピー
           </label>
-          <p className="ml-auto text-sm text-red-600">※適切に使わないと出力に失敗します</p>
+          <p className="ml-auto text-sm text-red-600">
+            ※適切に使わないと出力に失敗します
+          </p>
+        </div>
+        <div className="flex items-center">
+          <OptionTitle>ミュート</OptionTitle>
+          <label className="p-3">
+            <input
+              onChange={(e) => {
+                dispatch(
+                  optionsChanged({
+                    type: "mute",
+                    value: e.target.checked,
+                  })
+                );
+              }}
+              checked={mute}
+              className="mr-1"
+              type="checkbox"
+            />
+            ミュート
+          </label>
         </div>
         <div className="flex items-center">
           <label>
@@ -107,7 +127,7 @@ export const Settings = () => {
             </button>
           </label>
           <p className="ml-auto text-sm text-slate-500">
-            未設定のときは入力ファイル通りになります
+            未設定なら入力ファイル通り
           </p>
         </div>
         <div className="flex items-center">
@@ -122,7 +142,8 @@ export const Settings = () => {
               className="ml-2 mr-1 rounded-md border-2 border-solid border-teal-200 p-1"
               type="number"
               value={width ?? ""}
-            ></input>px
+            ></input>
+            px
             <button
               onClick={() => {
                 dispatch(optionsChanged({ type: "width", value: undefined }));
@@ -133,7 +154,7 @@ export const Settings = () => {
             </button>
           </label>
           <p className="ml-auto text-sm text-slate-500">
-            未設定のときは入力ファイル通りになります
+            未設定なら入力ファイル通り
           </p>
         </div>
       </div>
