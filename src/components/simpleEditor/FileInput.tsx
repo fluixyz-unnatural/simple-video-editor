@@ -8,6 +8,7 @@ export const FileInput = () => {
   return (
     <input
       type="file"
+      accept="video/*"
       onChange={({ target }) => {
         if (!target.files) return;
         const url = URL.createObjectURL(target.files[0]);
