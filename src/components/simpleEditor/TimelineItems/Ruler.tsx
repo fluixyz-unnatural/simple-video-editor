@@ -32,7 +32,6 @@ export const Ruler: React.FC<Props> = ({ canvas, tlConst, duration }) => {
   const big = properties[mode].big;
   const start = Math.floor(canvas.offset / big);
   const end = Math.floor(start + duration / canvas.scale / big) + 2;
-  console.log(start, end);
   return (
     <>
       <Suspense>

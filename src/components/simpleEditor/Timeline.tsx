@@ -2,11 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AreaSize, Second, Segment, DisplayPx } from "../../domains/unit";
 import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
-import {
-  calcOffset,
-  px2second,
-  width2dur,
-} from "./TimelineItems/utils/convert";
+import { calcOffset, px2second } from "./TimelineItems/utils/convert";
 import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine";
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
@@ -57,13 +53,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
           { ...canvas, scale: nextScale },
           duration
         ) as Second;
-        const w2d = width2dur(
-          10 as DisplayPx,
-          { ...canvas, scale: nextScale },
-          duration
-        );
-        console.log("w2d", w2d);
-        // if (w2d < 0.3) return;
+
         setScale(nextScale);
         setOffset(nextOffset);
       } else {
@@ -79,6 +69,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
     if (!parent.current) return;
     parent.current.addEventListener("wheel", onWheel);
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (parent.current) parent.current.removeEventListener("wheel", onWheel);
     };
   }, [parent, onWheel]);

@@ -1,5 +1,4 @@
 export const range = (to: number) => {
-  console.log(to);
   return [...Array(to).keys()];
 };
 
