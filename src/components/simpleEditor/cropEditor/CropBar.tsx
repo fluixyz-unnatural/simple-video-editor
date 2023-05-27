@@ -9,6 +9,7 @@ type Handlers<T> = { [key in Dim]?: T };
 
 const dims = ["left", "top", "right", "bottom"] as const;
 export type Dim = (typeof dims)[number];
+export type CropInfo = { [key in (typeof dims)[number]]: DisplayPx };
 
 type LinePos = "x1" | "x2" | "y1" | "y2";
 type Props = Omit<React.SVGAttributes<SVGLineElement>, LinePos> & {
@@ -18,7 +19,7 @@ type Props = Omit<React.SVGAttributes<SVGLineElement>, LinePos> & {
     setDragUps: React.Dispatch<React.SetStateAction<Handlers<() => void>>>;
     setDragMoves: React.Dispatch<React.SetStateAction<Handlers<DragHandler>>>;
   };
-  crop: { [key in (typeof dims)[number]]: DisplayPx };
+  crop: CropInfo;
   canvas: AreaSize<DisplayPx>;
   video: AreaSize<VideoPx>;
 };
@@ -112,8 +113,8 @@ export const CropBar: React.FC<Props> = ({
       onMouseDown={handlers.onMouseDown}
       className={`${
         ["left", "right"].includes(type)
-          ? "cursor-col-resize"
-          : "cursor-row-resize"
+          ? "cursor-ew-resize"
+          : "cursor-ns-resize"
       }`}
     >
       <line {...linePos} {...props} />

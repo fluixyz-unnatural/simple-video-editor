@@ -11,11 +11,13 @@ import {
   PropsWithChildren,
   forwardRef,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import { DragHandler, useDrag } from "../../utils/useDrag";
 import { Shade } from "./Shade";
+import { CropCorner } from "./CropCorner";
 
 type State = {
   video: AreaSize<VideoPx> | undefined;
@@ -87,6 +89,42 @@ export const CropEditor = () => {
   );
 
   const { handlers } = useDrag(onMove);
+  useEffect(() => {
+    for (const [, val] of Object.entries(dragMoves)) {
+      document.addEventListener("mousemove", val as any);
+    }
+    document.addEventListener("mousemove", handlers.onMouseMove as any);
+    return () => {
+      for (const [, val] of Object.entries(dragMoves)) {
+        document.removeEventListener("mousemove", val as any);
+      }
+      document.removeEventListener("mousemove", handlers.onMouseMove as any);
+    };
+  }, [dragMoves, handlers.onMouseMove]);
+  useEffect(() => {
+    for (const [, val] of Object.entries(dragLeaves)) {
+      document.addEventListener("mouseleave", val as any);
+    }
+    document.addEventListener("mouseleave", handlers.onMouseLeave as any);
+    return () => {
+      for (const [, val] of Object.entries(dragLeaves)) {
+        document.removeEventListener("mouseleave", val as any);
+      }
+      document.removeEventListener("mouseleave", handlers.onMouseLeave as any);
+    };
+  }, [dragLeaves, handlers.onMouseLeave]);
+  useEffect(() => {
+    for (const [, val] of Object.entries(dragUps)) {
+      document.addEventListener("mouseup", val as any);
+    }
+    document.addEventListener("mouseup", handlers.onMouseUp);
+    return () => {
+      for (const [, val] of Object.entries(dragUps)) {
+        document.removeEventListener("mouseup", val as any);
+      }
+      document.removeEventListener("mouseup", handlers.onMouseUp);
+    };
+  }, [dragUps, handlers.onMouseUp]);
 
   if (
     crops === undefined ||
@@ -98,32 +136,24 @@ export const CropEditor = () => {
 
   return (
     <Wrapper ref={ref}>
-      <div className="pointer-events-none absolute inset-0 hidden h-fit w-fit select-none bg-white bg-opacity-80 p-2">
-        crop: {JSON.stringify(crop)}
-        <br />
-        canvas: {JSON.stringify(size)}
-        <br />
-        video: {JSON.stringify(video)}
-        <br />
-      </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="bg-red bg-opacity h-full w-full"
         viewBox={`-16 -16 ${paddedSize.width} ${paddedSize.height}`}
-        onMouseMove={(ev) => {
-          for (const [, val] of Object.entries(dragMoves)) {
-            val(ev);
-          }
-          handlers.onMouseMove(ev);
-        }}
-        onMouseUp={() => {
-          for (const [, val] of Object.entries(dragUps)) val();
-          handlers.onMouseUp();
-        }}
-        onMouseLeave={() => {
-          for (const [, val] of Object.entries(dragLeaves)) val();
-          handlers.onMouseLeave();
-        }}
+        // onMouseMove={(ev) => {
+        //   for (const [, val] of Object.entries(dragMoves)) {
+        //     val(ev);
+        //   }
+        //   handlers.onMouseMove(ev);
+        // }}
+        // onMouseUp={() => {
+        //   for (const [, val] of Object.entries(dragUps)) val();
+        //   handlers.onMouseUp();
+        // }}
+        // onMouseLeave={() => {
+        //   for (const [, val] of Object.entries(dragLeaves)) val();
+        //   handlers.onMouseLeave();
+        // }}
       >
         <Shade canvas={size} crops={crops} />
         <rect
@@ -148,6 +178,21 @@ export const CropEditor = () => {
             setters={setters}
           />
         ))}
+        {(["left", "right"] as const).map((x) =>
+          (["top", "bottom"] as const).map((y) => {
+            return (
+              <CropCorner
+                yDim={y}
+                xDim={x}
+                canvas={size}
+                video={video}
+                key={x + y}
+                crop={crops}
+                setters={setters}
+              />
+            );
+          })
+        )}
       </svg>
     </Wrapper>
   );

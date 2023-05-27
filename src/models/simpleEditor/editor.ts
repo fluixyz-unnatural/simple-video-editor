@@ -105,6 +105,26 @@ const simpleEditorSlice = createSlice({
       const { type, time } = action.payload;
       state.options.segment[type] = time;
     },
+    cropCornerDraggedWithoutLockAspect: (
+      state,
+      action: PayloadAction<{
+        delta: Position<VideoPx>;
+        dim: ["left" | "right", "top" | "bottom"];
+      }>
+    ) => {
+      const { delta, dim } = action.payload;
+      const crop = state.options.crop;
+      if (dim[0] === "left") {
+        crop.start.x = (crop.start.x + delta.x) as AxisX<VideoPx>;
+      } else {
+        crop.end.x = (crop.end.x + delta.x) as AxisX<VideoPx>;
+      }
+      if (dim[1] === "top") {
+        crop.start.y = (crop.start.y + delta.y) as AxisY<VideoPx>;
+      } else {
+        crop.end.y = (crop.end.y + delta.y) as AxisY<VideoPx>;
+      }
+    },
     cropBarDragged: (
       state,
       action: PayloadAction<{ dim: Dim; delta: VideoPx }>
@@ -129,37 +149,37 @@ const simpleEditorSlice = createSlice({
           break;
       }
     },
+    // 移動
     cropMoved: (state, action: PayloadAction<{ dx: VideoPx; dy: VideoPx }>) => {
       if (state.input === undefined) return;
       const { dx, dy } = action.payload;
-      const clampX = (x: AxisX<VideoPx>) => {
-        if (state.input === undefined) return x;
-        return Math.max(
-          0,
-          Math.min(x, state.input.size.width)
-        ) as AxisX<VideoPx>;
-      };
-      const clampY = (y: AxisX<VideoPx>) => {
-        if (state.input === undefined) return y;
-        return Math.max(
-          0,
-          Math.min(y, state.input.size.height)
-        ) as AxisY<VideoPx>;
-      };
-      state.options.crop.start.x = (state.options.crop.start.x +
-        dx) as AxisX<VideoPx>;
-      state.options.crop.start.y = (state.options.crop.start.y +
-        dy) as AxisY<VideoPx>;
-      state.options.crop.end.x = (state.options.crop.end.x +
-        dx) as AxisX<VideoPx>;
-      state.options.crop.end.y = (state.options.crop.end.y +
-        dy) as AxisY<VideoPx>;
 
-      state.options.crop.start.x = clampX(state.options.crop.start.x);
-      state.options.crop.end.x = clampX(state.options.crop.end.x);
-      state.options.crop.start.y = clampY(state.options.crop.start.y);
-      state.options.crop.end.y = clampY(state.options.crop.end.y);
+      const { start, end } = state.options.crop;
+      start.x = (start.x + dx) as AxisX<VideoPx>;
+      start.y = (start.y + dy) as AxisY<VideoPx>;
+      end.x = (end.x + dx) as AxisX<VideoPx>;
+      end.y = (end.y + dy) as AxisY<VideoPx>;
+
+      if (start.x < 0) {
+        end.x = (end.x - start.x) as AxisX<VideoPx>;
+        start.x = 0 as AxisX<VideoPx>;
+      }
+      if (end.x > state.input.size.width) {
+        start.x = (state.input.size.width -
+          (end.x - start.x)) as AxisX<VideoPx>;
+        end.x = state.input.size.width;
+      }
+      if (start.y < 0) {
+        end.y = (end.y - start.y) as AxisY<VideoPx>;
+        start.y = 0 as AxisY<VideoPx>;
+      }
+      if (end.y > state.input.size.height) {
+        start.y = (state.input.size.height -
+          (end.y - start.y)) as AxisY<VideoPx>;
+        end.y = state.input.size.height;
+      }
     },
+
     optionsChanged: (state, actions: PayloadAction<OptionPayload>) => {
       // TODO 共存不可なものを設定できないようにする
       const payload = actions.payload;
@@ -212,5 +232,6 @@ export const {
   cropBarDragged,
   cropMoved,
   optionsChanged,
+  cropCornerDraggedWithoutLockAspect,
 } = simpleEditorSlice.actions;
 export const simpleEditorStore = configureStore(simpleEditorSlice);
