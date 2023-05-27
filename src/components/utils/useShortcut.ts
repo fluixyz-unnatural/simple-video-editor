@@ -7,6 +7,7 @@ export const useShortcut = (
   const onKeydown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === key) {
+        e.preventDefault();
         callback();
       }
     },

@@ -1,17 +1,17 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AreaSize, Second, Segment, DisplayPx } from "../../domains/unit";
 import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
-import { calcOffset, px2second } from "./TimelineItems/utils/convert";
+import {
+  calcOffset,
+  px2second,
+  width2dur,
+} from "./TimelineItems/utils/convert";
 import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine";
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
 import { useDomSize } from "../utils/useDomSize";
+import { Ruler } from "./TimelineItems/Ruler";
 
 type Props = {
   duration: Second;
@@ -57,7 +57,13 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
           { ...canvas, scale: nextScale },
           duration
         ) as Second;
-
+        const w2d = width2dur(
+          10 as DisplayPx,
+          { ...canvas, scale: nextScale },
+          duration
+        );
+        console.log("w2d", w2d);
+        // if (w2d < 0.3) return;
         setScale(nextScale);
         setOffset(nextOffset);
       } else {
@@ -100,6 +106,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
               );
             }}
           >
+            <Ruler duration={duration} canvas={canvas} tlConst={tlConst} />
             <VideoItem canvas={canvas} tlConst={tlConst} duration={duration} />
             <CurrentTimeVerticalLine
               canvas={canvas}
