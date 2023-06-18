@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AreaSize, Second, Segment, DisplayPx } from "../../domains/unit";
 import { currentChanged } from "../../models/simpleEditor/editor";
 import { useDispatch } from "react-redux";
@@ -12,6 +7,7 @@ import { CurrentTimeVerticalLine } from "./TimelineItems/CurrentTimeVerticalLine
 import { VideoItem } from "./TimelineItems/VideoItem";
 import { SegmentController } from "./TimelineItems/SegmentController";
 import { useDomSize } from "../utils/useDomSize";
+import { Ruler } from "./TimelineItems/Ruler";
 
 type Props = {
   duration: Second;
@@ -73,6 +69,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
     if (!parent.current) return;
     parent.current.addEventListener("wheel", onWheel);
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (parent.current) parent.current.removeEventListener("wheel", onWheel);
     };
   }, [parent, onWheel]);
@@ -100,6 +97,7 @@ export const Timeline: React.FC<Props> = ({ current, duration, segment }) => {
               );
             }}
           >
+            <Ruler duration={duration} canvas={canvas} tlConst={tlConst} />
             <VideoItem canvas={canvas} tlConst={tlConst} duration={duration} />
             <CurrentTimeVerticalLine
               canvas={canvas}

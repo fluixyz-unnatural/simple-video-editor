@@ -12,9 +12,9 @@ export const VideoItem: React.FC<VideoItemProps> = ({
   return (
     <rect
       x={second2px(0 as Second, canvas, duration)}
-      y={tlConst.TIMELINE_PY}
+      y={tlConst.TIMELINE_PY + 16}
       width={dur2width(duration as Second, canvas, duration)}
-      height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2}
+      height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2 - 16}
       rx={8}
       ry={8}
       fill={"#99f6e4"}

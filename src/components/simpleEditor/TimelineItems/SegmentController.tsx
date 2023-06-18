@@ -59,8 +59,8 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
           canvas,
           duration
         )}
-        y={tlConst.TIMELINE_PY + 3}
-        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2 - 6}
+        y={tlConst.TIMELINE_PY + 3+16}
+        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2 - 6 - 16}
         strokeWidth={2}
         strokeOpacity={0.6}
         stroke="#fff"
@@ -69,8 +69,8 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
       {/* shadow */}
       <rect
         x={second2px(0 as Second, canvas, duration)}
-        y={tlConst.TIMELINE_PY}
-        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2}
+        y={tlConst.TIMELINE_PY+16}
+        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2-16}
         width={dur2width(segment.start, canvas, duration)}
         fill="#000"
         opacity={0.32}
@@ -79,8 +79,8 @@ export const SegmentController: React.FC<SegmentControllerProps> = ({
       />
       <rect
         x={second2px(segment.end, canvas, duration)}
-        y={tlConst.TIMELINE_PY}
-        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2}
+        y={tlConst.TIMELINE_PY+16}
+        height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2-16}
         width={dur2width((duration - segment.end) as Second, canvas, duration)}
         fill="#000"
         opacity={0.32}
@@ -128,8 +128,8 @@ const DraggableCursor: React.FC<DraggableCursorProps> = ({
       onMouseDown={handlers.onMouseDown}
       fill="#fff"
       width={16}
-      y={tlConst.TIMELINE_PY - 4}
-      height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2 + 8}
+      y={tlConst.TIMELINE_PY - 4+16}
+      height={tlConst.TIMELINE_HEIGHT - tlConst.TIMELINE_PY * 2 + 8-16}
       x={second2px(pos, canvas, duration) - 8}
       strokeWidth={hover ? 2 : 1}
       rx={8}
